@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KWZero - 30秒内发现低竞争关键词</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
+        }
+        
+        :root {
+            --apple-gray: #1D1D1F;
+            --apple-blue: #007AFF;
+            --apple-blue-hover: #0056CC;
+            --apple-light-gray: #F5F5F7;
+            --apple-medium-gray: #86868B;
+            --apple-text-secondary: #6E6E73;
+            --apple-border: rgba(0, 0, 0, 0.1);
+            --apple-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --apple-shadow-hover: 0 8px 30px rgba(0, 122, 255, 0.15);
+        }
+        
+        .apple-shadow {
+            box-shadow: var(--apple-shadow);
+        }
+        
+        .apple-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #007AFF 0%, #5AC8FA 100%);
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #F5F5F7 0%, #E5E5EA 100%);
+        }
+        
+        .floating-animation {
+            animation: floating 6s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .keyword-card {
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .keyword-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0, 122, 255, 0.2);
+        }
+        
+        .btn-primary {
+            background: var(--apple-blue);
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .btn-primary:hover {
+            background: var(--apple-blue-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--apple-shadow-hover);
+        }
+        
+        .section-spacing {
+            padding: 80px 0;
+        }
+        
+        .container-custom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        @media (max-width: 768px) {
+            .section-spacing {
+                padding: 48px 0;
+            }
+            .container-custom {
+                padding: 0 16px;
+            }
+            .hero-gradient h1 {
+                font-size: 2.5rem;
+                line-height: 1.2;
+            }
+            .industry-btn {
+                padding: 12px;
+            }
+        }
+        
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .toast {
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900">
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-gray-200">
+        <div class="container-custom">
+            <nav class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-gray-900">KWZero</h1>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-blue-600 transition-colors">Features</a>
+                    <a href="#how-it-works" class="text-gray-600 hover:text-blue-600 transition-colors">How it Works</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-blue-600 transition-colors">Pricing</a>
+                    <a href="#faq" class="text-gray-600 hover:text-blue-600 transition-colors">FAQ</a>
+                </div>
+                <button class="btn-primary text-white px-6 py-2 rounded-full font-medium" onclick="scrollToTool()">
+                    立即试用
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-gradient pt-24 pb-16 relative overflow-hidden">
+        <div class="container-custom">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="text-center lg:text-left">
+                    <h1 class="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-6">
+                        30秒内发现
+                        <span class="text-blue-600">低竞争关键词</span>
+                    </h1>
+                    <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+                        基于Google真实数据的智能筛选，无需AI，为内容创作者提供精准的关键词建议
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <button class="btn-primary text-white px-8 py-4 rounded-full font-medium text-lg" onclick="scrollToTool()">
+                            免费试用 3 次
+                        </button>
+                        <button class="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-full font-medium text-lg hover:border-blue-600 hover:text-blue-600 transition-colors">
+                            查看演示
+                        </button>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="floating-animation">
+                        <div class="apple-card rounded-3xl p-8 apple-shadow">
+                            <div class="space-y-4">
+                                <div class="keyword-card bg-blue-50 border border-blue-200 rounded-xl p-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-blue-900">low competition saas tools</span>
+                                        <span class="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded-full">难度: 28</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm text-blue-700 mt-2">
+                                        <span>搜索量: 2,400</span>
+                                        <span>CPC: $3.20</span>
+                                    </div>
+                                </div>
+                                <div class="keyword-card bg-green-50 border border-green-200 rounded-xl p-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-green-900">affordable marketing software</span>
+                                        <span class="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">难度: 22</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm text-green-700 mt-2">
+                                        <span>搜索量: 1,800</span>
+                                        <span>CPC: $2.80</span>
+                                    </div>
+                                </div>
+                                <div class="keyword-card bg-purple-50 border border-purple-200 rounded-xl p-4">
+                                    <div class="flex justify-between items-center">
+                                        <span class="font-medium text-purple-900">simple crm for startups</span>
+                                        <span class="text-sm text-purple-600 bg-purple-100 px-2 py-1 rounded-full">难度: 25</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm text-purple-700 mt-2">
+                                        <span>搜索量: 1,600</span>
+                                        <span>CPC: $4.10</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Keyword Generation Tool -->
+    <section id="tool" class="section-spacing bg-gray-50">
+        <div class="container-custom">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">立即生成关键词</h2>
+                <p class="text-xl text-gray-600">选择您的行业，30秒获得专业关键词建议</p>
+            </div>
+            
+            <div class="max-w-2xl mx-auto">
+                <div class="apple-card rounded-3xl p-8 apple-shadow">
+                    <div class="mb-6">
+                        <label class="block text-lg font-semibold text-gray-900 mb-4">选择您的行业</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <button class="industry-btn p-4 rounded-xl border-2 border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition-all text-center" data-industry="saas">
+                                <div class="text-2xl mb-2">💻</div>
+                                <div class="text-sm font-medium">SaaS软件</div>
+                            </button>
+                            <button class="industry-btn p-4 rounded-xl border-2 border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition-all text-center" data-industry="ecommerce">
+                                <div class="text-2xl mb-2">🛒</div>
+                                <div class="text-sm font-medium">电子商务</div>
+                            </button>
+                            <button class="industry-btn p-4 rounded-xl border-2 border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition-all text-center" data-industry="b2b">
+                                <div class="text-2xl mb-2">🏢</div>
+                                <div class="text-sm font-medium">B2B服务</div>
+                            </button>
+                            <button class="industry-btn p-4 rounded-xl border-2 border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition-all text-center" data-industry="finance">
+                                <div class="text-2xl mb-2">💰</div>
+                                <div class="text-sm font-medium">金融服务</div>
+                            </button>
+                            <button class="industry-btn p-4 rounded-xl border-2 border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition-all text-center" data-industry="health">
+                                <div class="text-2xl mb-2">🏥</div>
+                                <div class="text-sm font-medium">健康保健</div>
+                            </button>
+                            <button class="industry-btn p-4 rounded-xl border-2 border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition-all text-center" data-industry="tech">
+                                <div class="text-2xl mb-2">⚡</div>
+                                <div class="text-sm font-medium">科技产品</div>
+                            </button>
+                            <button class="industry-btn p-4 rounded-xl border-2 border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition-all text-center" data-industry="education">
+                                <div class="text-2xl mb-2">📚</div>
+                                <div class="text-sm font-medium">教育培训</div>
+                            </button>
+                            <button class="industry-btn p-4 rounded-xl border-2 border-gray-200 hover:border-blue-600 hover:bg-blue-50 transition-all text-center" data-industry="marketing">
+                                <div class="text-2xl mb-2">📈</div>
+                                <div class="text-sm font-medium">市场营销</div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center">
+                        <button id="generateBtn" class="btn-primary text-white px-12 py-4 rounded-full font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            生成关键词 (剩余 <span id="remainingCount">3</span> 次)
+                        </button>
+                    </div>
+                    
+                    <div id="results" class="mt-8 hidden">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">为您推荐的低竞争关键词</h3>
+                        <div id="keywordsList" class="space-y-3">
+                            <!-- 动态生成关键词列表 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section-spacing">
+        <div class="container-custom">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">为什么选择 KWZero</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">基于真实数据的智能关键词发现，让您的内容营销事半功倍</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">真实数据驱动</h3>
+                    <p class="text-gray-600">基于Google官方API的真实搜索数据，准确率超过80%</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">智能难度评分</h3>
+                    <p class="text-gray-600">AI算法自动计算关键词竞争难度，筛选最佳机会</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">即时结果</h3>
+                    <p class="text-gray-600">30秒内获得10个精选关键词，节省您宝贵的时间</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">即用即付</h3>
+                    <p class="text-gray-600">无需订阅，一次性付费永久有效，性价比超高</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section id="how-it-works" class="section-spacing bg-gray-50">
+        <div class="container-custom">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">使用方法</h2>
+                <p class="text-xl text-gray-600">三步即可获得专业关键词建议</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">1</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">选择行业</h3>
+                    <p class="text-gray-600">从8个主要行业中选择最符合您业务的分类</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">2</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">点击生成</h3>
+                    <p class="text-gray-600">一键生成，我们的算法将为您筛选最佳关键词</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-blue-600 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-2xl font-bold">3</div>
+                    <h3 class="text-xl font-semibold text-gray-900 mb-3">获得关键词</h3>
+                    <p class="text-gray-600">获得10个低竞争、高价值的关键词建议</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="section-spacing">
+        <div class="container-custom">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">简单透明的定价</h2>
+                <p class="text-xl text-gray-600">无需订阅，一次性付费永久有效</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="apple-card rounded-3xl p-8 apple-shadow border-2 border-gray-200">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">免费试用</h3>
+                        <div class="text-5xl font-bold text-gray-900 mb-2">$0</div>
+                        <p class="text-gray-600 mb-8">体验产品功能</p>
+                        <ul class="space-y-4 mb-8 text-left">
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                3 次关键词生成
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                8 个行业覆盖
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                基础关键词数据
+                            </li>
+                        </ul>
+                        <button class="w-full border-2 border-gray-300 text-gray-700 py-3 rounded-full font-semibold hover:border-blue-600 hover:text-blue-600 transition-colors">
+                            开始免费试用
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="apple-card rounded-3xl p-8 apple-shadow border-2 border-blue-600 relative">
+                    <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <span class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium">推荐</span>
+                    </div>
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">专业版</h3>
+                        <div class="text-5xl font-bold text-blue-600 mb-2">$4.9</div>
+                        <p class="text-gray-600 mb-8">一次性付费，永久有效</p>
+                        <ul class="space-y-4 mb-8 text-left">
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                30 次关键词生成
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                完整行业覆盖
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                详细关键词数据
+                            </li>
+                            <li class="flex items-center">
+                                <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                </svg>
+                                优先客服支持
+                            </li>
+                        </ul>
+                        <button class="w-full btn-primary text-white py-3 rounded-full font-semibold" onclick="showPaymentModal()">
+                            立即购买
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="section-spacing bg-gray-50">
+        <div class="container-custom">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">常见问题</h2>
+                <p class="text-xl text-gray-600">关于KWZero的常见疑问解答</p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto space-y-4">
+                <div class="faq-item apple-card rounded-2xl p-6 apple-shadow cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-900">数据来源是什么？</h3>
+                        <svg class="w-6 h-6 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer hidden mt-4 text-gray-600">
+                        我们的数据直接来自Google官方API和免费工具，确保数据的真实性和准确性。每周更新一次，覆盖最新的搜索趋势。
+                    </div>
+                </div>
+                
+                <div class="faq-item apple-card rounded-2xl p-6 apple-shadow cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-900">准确率如何？</h3>
+                        <svg class="w-6 h-6 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer hidden mt-4 text-gray-600">
+                        基于真实Google数据，我们的关键词准确率超过80%。所有关键词都经过竞争度验证，确保为您推荐的都是低竞争、高价值的关键词。
+                    </div>
+                </div>
+                
+                <div class="faq-item apple-card rounded-2xl p-6 apple-shadow cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-900">30次能用多久？</h3>
+                        <svg class="w-6 h-6 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer hidden mt-4 text-gray-600">
+                        根据用户反馈，30次生成平均可以使用1-3个月，每次生成10个关键词，足够支撑您的内容营销需求。
+                    </div>
+                </div>
+                
+                <div class="faq-item apple-card rounded-2xl p-6 apple-shadow cursor-pointer" onclick="toggleFaq(this)">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold text-gray-900">可以退款吗？</h3>
+                        <svg class="w-6 h-6 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                    <div class="faq-answer hidden mt-4 text-gray-600">
+                        我们提供7天无条件退款保证。如果您对产品不满意且未使用超过5次生成，可以申请全额退款。
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="apple-card rounded-3xl p-8 apple-shadow max-w-md w-full">
+            <div class="text-center">
+                <h3 class="text-2xl font-bold text-gray-900 mb-4">升级到专业版</h3>
+                <div class="text-4xl font-bold text-blue-600 mb-2">$4.9</div>
+                <p class="text-gray-600 mb-6">一次性付费，获得30次关键词生成</p>
+                
+                <ul class="text-left space-y-3 mb-8">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        30次关键词生成
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        永久有效，无订阅
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                        </svg>
+                        7天无条件退款
+                    </li>
+                </ul>
+                
+                <div class="space-y-3">
+                    <button id="confirmPayment" class="w-full btn-primary text-white py-3 rounded-full font-semibold">
+                        确认支付
+                    </button>
+                    <button onclick="closePaymentModal()" class="w-full border-2 border-gray-300 text-gray-700 py-3 rounded-full font-semibold hover:border-blue-600 hover:text-blue-600 transition-colors">
+                        取消
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="container-custom">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">KWZero</h3>
+                    <p class="text-gray-400">30秒内发现低竞争关键词，让您的内容营销更有效率。</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">产品</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#features" class="hover:text-white transition-colors">功能特点</a></li>
+                        <li><a href="#pricing" class="hover:text-white transition-colors">价格方案</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">API文档</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">公司</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">关于我们</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">联系我们</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">博客</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">法律</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">隐私政策</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">服务条款</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">退款政策</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 KWZero. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // API配置
+        const API_BASE = window.location.origin;
+
+        let selectedIndustry = null;
+        let remainingUses = 3;
+        
+        // 初始化应用
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserStatus();
+        });
+        
+        // 加载用户状态
+        async function loadUserStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/api/status`);
+                const data = await response.json();
+                remainingUses = data.remaining;
+                updateRemainingCount();
+            } catch (error) {
+                console.error('加载用户状态失败:', error);
+                showToast('加载状态失败，请刷新页面重试', 'error');
+            }
+        }
+        
+        // 更新剩余次数显示
+        function updateRemainingCount() {
+            document.getElementById('remainingCount').textContent = remainingUses;
+        }
+        
+        // 显示提示消息
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'error' ? 'bg-red-500' : 'bg-green-500';
+            toast.className = `toast fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-xl shadow-lg z-50 max-w-sm`;
+            toast.textContent = message;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Industry selection
+        document.querySelectorAll('.industry-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove previous selection
+                document.querySelectorAll('.industry-btn').forEach(b => {
+                    b.classList.remove('border-blue-600', 'bg-blue-50');
+                    b.classList.add('border-gray-200');
+                });
+                
+                // Add selection to current button
+                this.classList.remove('border-gray-200');
+                this.classList.add('border-blue-600', 'bg-blue-50');
+                
+                selectedIndustry = this.dataset.industry;
+                
+                // Enable generate button
+                const generateBtn = document.getElementById('generateBtn');
+                generateBtn.disabled = false;
+                generateBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            });
+        });
+
+        // Generate keywords
+        document.getElementById('generateBtn').addEventListener('click', async function() {
+            if (!selectedIndustry || remainingUses <= 0) return;
+            
+            const button = this;
+            const originalText = button.innerHTML;
+            
+            // Show loading state
+            button.innerHTML = '<div class="loading-spinner inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>生成中...';
+            button.disabled = true;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/keywords`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ industry: selectedIndustry })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    displayKeywords(data.keywords);
+                    remainingUses = data.remaining;
+                    updateRemainingCount();
+                    showToast('关键词生成成功！', 'success');
+                    
+                    button.innerHTML = `生成关键词 (剩余 ${remainingUses} 次)`;
+                    
+                    if (remainingUses > 0) {
+                        button.disabled = false;
+                    } else {
+                        button.innerHTML = '试用次数已用完 - 升级到专业版';
+                        button.onclick = () => {
+                            document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
+                        };
+                        showToast('免费次数已用完，升级获得更多次数！', 'info');
+                    }
+                } else {
+                    if (data.error && data.error.includes('免费次数已用完')) {
+                        button.innerHTML = '试用次数已用完 - 升级到专业版';
+                        button.onclick = () => {
+                            document.getElementById('pricing').scrollIntoView({ behavior: 'smooth' });
+                        };
+                        showToast('免费次数已用完，请升级获得更多关键词！', 'error');
+                    } else {
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                        showToast(data.error || '生成失败，请重试', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('生成关键词失败:', error);
+                button.innerHTML = originalText;
+                button.disabled = false;
+                showToast('网络错误，请检查连接后重试', 'error');
+            }
+        });
+
+        function displayKeywords(keywords) {
+            const resultsDiv = document.getElementById('results');
+            const keywordsList = document.getElementById('keywordsList');
+            
+            // Clear previous results
+            keywordsList.innerHTML = '';
+            
+            if (!keywords || keywords.length === 0) {
+                keywordsList.innerHTML = '<p class="text-gray-500 text-center py-8">暂无关键词数据</p>';
+                resultsDiv.classList.remove('hidden');
+                return;
+            }
+            
+            // Generate keyword cards
+            keywords.forEach((kw, index) => {
+                const keywordCard = document.createElement('div');
+                keywordCard.className = 'keyword-card bg-white border border-gray-200 rounded-xl p-4 hover:shadow-lg transition-all cursor-pointer';
+                
+                // 计算难度等级颜色
+                const getDifficultyColor = (difficulty) => {
+                    if (difficulty <= 20) return 'text-green-600 bg-green-100';
+                    if (difficulty <= 30) return 'text-yellow-600 bg-yellow-100';
+                    return 'text-red-600 bg-red-100';
+                };
+                
+                keywordCard.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="font-medium text-gray-900 flex-1 pr-2">${kw.keyword}</span>
+                        <span class="text-sm ${getDifficultyColor(kw.difficulty)} px-2 py-1 rounded-full whitespace-nowrap">难度: ${kw.difficulty}</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>搜索量: ${kw.volume.toLocaleString()}</span>
+                        <span>CPC: $${kw.cpc}</span>
+                    </div>
+                    ${kw.score ? `<div class="mt-2 text-xs text-blue-600">评分: ${kw.score}</div>` : ''}
+                `;
+                
+                // Add click to copy functionality
+                keywordCard.addEventListener('click', () => {
+                    navigator.clipboard.writeText(kw.keyword).then(() => {
+                        showToast(`已复制: ${kw.keyword}`, 'success');
+                    }).catch(() => {
+                        showToast('复制失败，请手动选择', 'error');
+                    });
+                });
+                
+                // Add animation delay
+                keywordCard.style.animationDelay = `${index * 100}ms`;
+                keywordCard.style.opacity = '0';
+                keywordCard.style.transform = 'translateY(20px)';
+                
+                keywordsList.appendChild(keywordCard);
+                
+                // Animate in
+                setTimeout(() => {
+                    keywordCard.style.transition = 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    keywordCard.style.opacity = '1';
+                    keywordCard.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+            
+            // Show results
+            resultsDiv.classList.remove('hidden');
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // 显示支付模态框
+        function showPaymentModal() {
+            document.getElementById('paymentModal').classList.remove('hidden');
+        }
+        
+        // 关闭支付模态框
+        function closePaymentModal() {
+            document.getElementById('paymentModal').classList.add('hidden');
+        }
+        
+        // 处理支付
+        document.getElementById('confirmPayment').addEventListener('click', async function() {
+            const button = this;
+            const originalText = button.textContent;
+            
+            button.disabled = true;
+            button.innerHTML = '<div class="loading-spinner inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>正在跳转...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/payment/create-checkout`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.sessionId) {
+                    // 使用Stripe Checkout
+                    window.location.href = `https://checkout.stripe.com/pay/${data.sessionId}`;
+                } else {
+                    throw new Error(data.error || '创建支付会话失败');
+                }
+            } catch (error) {
+                console.error('支付失败:', error);
+                showToast('支付失败，请重试', 'error');
+                button.disabled = false;
+                button.textContent = originalText;
+            }
+        });
+        
+        // 点击模态框外部关闭
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePaymentModal();
+            }
+        });
+        
+        // 键盘事件
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePaymentModal();
+            }
+        });
+
+        function toggleFaq(element) {
+            const answer = element.querySelector('.faq-answer');
+            const icon = element.querySelector('svg');
+            
+            if (answer.classList.contains('hidden')) {
+                answer.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                answer.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function scrollToTool() {
+            document.getElementById('tool').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

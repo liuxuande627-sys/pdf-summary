@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(npm test)",
+      "Bash(wmic:*)",
+      "Bash(npm run dev)",
+      "keywordfetch"
+    ],
+    "deny": []
+  }
+}
